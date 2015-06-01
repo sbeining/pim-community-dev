@@ -237,9 +237,8 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
     public function iShowTheFilter($filterName)
     {
         if (strtolower($filterName) !== 'category') {
-            $this->wait();
+            $this->wait(10000, '$("div.filter-box").length > 0;');
             $this->datagrid->showFilter($filterName);
-            $this->wait();
             $this->datagrid->assertFilterVisible($filterName);
         }
     }
@@ -293,6 +292,7 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
 
         $expectedPosition = 0;
         foreach ($columns as $column) {
+            var_dump($column);
             $position = $this->datagrid->getColumnPosition($column);
             if ($expectedPosition++ !== $position) {
                 throw $this->createExpectationException(
@@ -441,8 +441,9 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
      */
     public function iSortByValue($columnName, $order = 'ascending')
     {
+        $this->wait(10000, sprintf('$("a:contains(\'%s\')").length > 0', $columnName));
         $this->datagrid->sortBy($columnName, $order);
-        $this->wait();
+        $this->wait(10000, "$('.loading-mask').css('display') == 'none';");
     }
 
     /**
