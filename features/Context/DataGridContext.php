@@ -3,6 +3,7 @@
 namespace Context;
 
 use Behat\Behat\Context\Step;
+use Behat\Behat\Context\Step\Then;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
@@ -315,9 +316,19 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
      */
     public function theRowsShouldBeSortedBy($order, $columnName)
     {
-        $columnName = strtoupper($columnName);
+        $values = json_decode($this->getMainContext()->execute('datagrid/sorted-and-ordered', $columnName));
 
-        if (!$this->datagrid->isSortedAndOrdered($columnName, $order)) {
+        $sortedValues = $values;
+        if ($order === 'ascending') {
+            sort($sortedValues, SORT_NATURAL | SORT_FLAG_CASE);
+        } else {
+            rsort($sortedValues, SORT_NATURAL | SORT_FLAG_CASE);
+        }
+        var_dump($values);
+        var_dump($sortedValues);
+        var_dump($order);
+
+        if ($sortedValues !== $values) {
             throw $this->createExpectationException(
                 sprintf('The rows are not sorted %s by column %s', $order, $columnName)
             );
@@ -371,9 +382,9 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
      */
     public function iShouldBeAbleToSortTheRowsBy($columns)
     {
-        $steps = array(
+        $steps = [
             new Step\Then(sprintf('the rows should be sortable by %s', $columns))
-        );
+        ];
         $columns = $this->getMainContext()->listToArray($columns);
 
         foreach ($columns as $column) {
@@ -395,7 +406,7 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
      */
     public function iShouldBeAbleToUseTheFollowingFilters(TableNode $table)
     {
-        $steps = array();
+        $steps = [];
 
         foreach ($table->getHash() as $item) {
             $count = count($this->getMainContext()->listToArray($item['result']));
@@ -442,8 +453,10 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
     public function iSortByValue($columnName, $order = 'ascending')
     {
         $this->wait(10000, sprintf('$("a:contains(\'%s\')").length > 0', ucfirst($columnName)));
+        printf('[%d] Sort column %s was found.' . PHP_EOL, time(), ucfirst($columnName));
         $this->datagrid->sortBy($columnName, $order);
         $this->wait(10000, "$('.loading-mask').css('display') == 'none';");
+        printf('[%d] Sort by %s terminated.' . PHP_EOL, time(), $columnName);
     }
 
     /**
@@ -541,12 +554,12 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
         $datePattern = '/^(more than|less than|between|not between) (\d{4}-\d{2}-\d{2})( and )?(\d{4}-\d{2}-\d{2})?$/';
         $operator = false;
 
-        $matches = array();
+        $matches = [];
         if (preg_match($datePattern, $value, $matches)) {
             $operator = $matches[1];
             $date     = $matches[2];
             if (5 === count($matches)) {
-                $date = array($date);
+                $date = [$date];
                 $date[] = $matches[4];
             }
             $this->filterByDate($filterName, $date, $operator);
@@ -564,7 +577,7 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
                 $value    = $matches[2];
             }
 
-            $operators = array(
+            $operators = [
                 'contains'         => Grid::FILTER_CONTAINS,
                 'does not contain' => Grid::FILTER_DOES_NOT_CONTAIN,
                 'is equal to'      => Grid::FILTER_IS_EQUAL_TO,
@@ -572,7 +585,7 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
                 'ends with'        => Grid::FILTER_ENDS_WITH,
                 'empty'            => Grid::FILTER_IS_EMPTY,
                 'in list'          => Grid::FILTER_IN_LIST,
-            );
+            ];
 
             $operator = $operators[$operator];
         }
@@ -915,7 +928,7 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
     protected function filterByDate($filterName, $values, $operator)
     {
         if (!is_array($values)) {
-            $values = array($values, $values);
+            $values = [$values, $values];
         }
 
         $filter = $this->datagrid->getFilter($filterName);

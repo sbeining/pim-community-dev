@@ -306,12 +306,16 @@ class Grid extends Index
      */
     public function getValuesInColumn($column)
     {
-        $column = $this->getColumnPosition($column, true);
+        printf('[%d] start get values in column %s.' . PHP_EOL, time(), $column);
+        $columnOffset = $this->getColumnPosition($column, true);
+        printf('[%d] get rows.' . PHP_EOL, time());
         $rows   = $this->getRows();
+
         $values = array();
 
+        printf('[%d] foreach.' . PHP_EOL, time());
         foreach ($rows as $row) {
-            $cell = $this->getRowCell($row, $column);
+            $cell = $this->getRowCell($row, $columnOffset);
             if ($span = $cell->find('css', 'span')) {
                 $values[] = (string) strpos($span->getAttribute('class'), 'success') !== false;
             } else {
@@ -319,6 +323,7 @@ class Grid extends Index
             }
         }
 
+        printf('[%d] end get values in column %s.' . PHP_EOL, time(), $column);
         return $values;
     }
 
@@ -372,6 +377,8 @@ class Grid extends Index
             return false;
         }
 
+        printf('[%d] Sorted column %s found.' . PHP_EOL, time(), $column);
+
         $values = $this->getValuesInColumn($column);
         $sortedValues = $values;
         if ($order === 'ascending') {
@@ -379,6 +386,8 @@ class Grid extends Index
         } else {
             rsort($sortedValues, SORT_NATURAL | SORT_FLAG_CASE);
         }
+
+        printf('[%d] Sorted values for %s found.' . PHP_EOL, time(), $column);
 
         return $sortedValues === $values;
     }
@@ -684,7 +693,7 @@ class Grid extends Index
     }
     /**
      * @param NodeElement $row
-     * @param string      $position
+     * @param int         $position
      *
      * @return NodeElement
      */
