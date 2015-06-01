@@ -455,7 +455,7 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
         $this->wait(10000, sprintf('$("a:contains(\'%s\')").length > 0', ucfirst($columnName)));
         printf('[%d] Sort column %s was found.' . PHP_EOL, time(), ucfirst($columnName));
         $this->datagrid->sortBy($columnName, $order);
-        $this->wait(10000, "$('.loading-mask').css('display') == 'none';");
+        $this->wait();
         printf('[%d] Sort by %s terminated.' . PHP_EOL, time(), $columnName);
     }
 
