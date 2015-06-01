@@ -220,7 +220,7 @@ class WebUser extends RawMinkContext
      */
     public function iVisitTheTab($tab)
     {
-        $tabLocator = sprintf('$("a[data-toggle=\'tab\']:contains(\'%s\')").length > 0;', $tab);
+        $tabLocator = sprintf('$("a:contains(\'%s\')").length > 0;', $tab);
         $this->wait(10000, $tabLocator);
         $this->getCurrentPage()->visitTab($tab);
         $this->wait();
