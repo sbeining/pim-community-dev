@@ -240,6 +240,7 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
         if (strtolower($filterName) !== 'category') {
             $this->wait(10000, '$("div.filter-box").length > 0;');
             $this->datagrid->showFilter($filterName);
+            $this->wait();
             $this->datagrid->assertFilterVisible($filterName);
         }
     }
@@ -293,7 +294,6 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
 
         $expectedPosition = 0;
         foreach ($columns as $column) {
-            var_dump($column);
             $position = $this->datagrid->getColumnPosition($column);
             if ($expectedPosition++ !== $position) {
                 throw $this->createExpectationException(
@@ -316,19 +316,9 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
      */
     public function theRowsShouldBeSortedBy($order, $columnName)
     {
-        $values = json_decode($this->getMainContext()->execute('datagrid/sorted-and-ordered', $columnName));
+        $columnName = strtoupper($columnName);
 
-        $sortedValues = $values;
-        if ($order === 'ascending') {
-            sort($sortedValues, SORT_NATURAL | SORT_FLAG_CASE);
-        } else {
-            rsort($sortedValues, SORT_NATURAL | SORT_FLAG_CASE);
-        }
-        var_dump($values);
-        var_dump($sortedValues);
-        var_dump($order);
-
-        if ($sortedValues !== $values) {
+        if (!$this->datagrid->isSortedAndOrdered($columnName, $order)) {
             throw $this->createExpectationException(
                 sprintf('The rows are not sorted %s by column %s', $order, $columnName)
             );

@@ -306,16 +306,12 @@ class Grid extends Index
      */
     public function getValuesInColumn($column)
     {
-        printf('[%d] start get values in column %s.' . PHP_EOL, time(), $column);
-        $columnOffset = $this->getColumnPosition($column, true);
-        printf('[%d] get rows.' . PHP_EOL, time());
+        $column = $this->getColumnPosition($column, true);
         $rows   = $this->getRows();
-
         $values = array();
 
-        printf('[%d] foreach.' . PHP_EOL, time());
         foreach ($rows as $row) {
-            $cell = $this->getRowCell($row, $columnOffset);
+            $cell = $this->getRowCell($row, $column);
             if ($span = $cell->find('css', 'span')) {
                 $values[] = (string) strpos($span->getAttribute('class'), 'success') !== false;
             } else {
@@ -323,7 +319,6 @@ class Grid extends Index
             }
         }
 
-        printf('[%d] end get values in column %s.' . PHP_EOL, time(), $column);
         return $values;
     }
 

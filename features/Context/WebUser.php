@@ -1010,6 +1010,8 @@ class WebUser extends RawMinkContext
     /**
      * @param string $link
      *
+     * @Given /^I open "([^"]*)" in the current window$/
+
      * @throws ExpectationException
      *
      * @return Step\Given
