@@ -656,7 +656,17 @@ class NavigationContext extends RawMinkContext implements PageObjectAwareInterfa
 
         $page = $this->getCurrentPage()->open($options);
         $this->loginIfRequired();
-        $this->wait();
+
+        $conditions = [
+            "document.readyState == 'complete'",           // Page is ready
+            "typeof $ != 'undefined'",                     // jQuery is loaded
+            "!$.active",                                   // No ajax request is active
+            "$('#page').css('display') == 'block'",        // Page is displayed (no progress bar)
+            "$('.jstree-loading').length == 0",            // Jstree has finished loading
+        ];
+
+        $condition = implode(' && ', $conditions);
+        $this->wait(10000, $condition);
 
         return $page;
     }
