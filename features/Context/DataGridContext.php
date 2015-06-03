@@ -285,6 +285,9 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
         $columns = $this->getMainContext()->listToArray($columns);
 
         $expectedColumns = count($columns);
+
+        $this->wait(10000, '$("table.grid").length > 0');
+
         $countColumns    = $this->datagrid->countColumns();
         if ($expectedColumns !== $countColumns) {
             throw $this->createExpectationException(
