@@ -316,9 +316,41 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
      */
     public function theRowsShouldBeSortedBy($order, $columnName)
     {
-        $columnName = strtoupper($columnName);
+        $this->theRowsShouldBeSortedByJs($order, $columnName);
 
-        if (!$this->datagrid->isSortedAndOrdered($columnName, $order)) {
+//        $columnName = strtoupper($columnName);
+//
+//        if (!$this->datagrid->isSortedAndOrdered($columnName, $order)) {
+//            throw $this->createExpectationException(
+//                sprintf('The rows are not sorted %s by column %s', $order, $columnName)
+//            );
+//        }
+    }
+
+    /**
+     * @param string $order
+     * @param string $columnName
+     *
+     * @Then /^the rows should be sorted newly (ascending|descending) by (.*)$/
+     */
+    public function theRowsShouldBeSortedByJs($order, $columnName)
+    {
+        /* @var ScriptsManager $scriptsManager */
+        $scriptsManager = $this->getMainContext()->getScriptsManager();
+        $values = json_decode($scriptsManager->execute('datagrid/column-values', $columnName));
+
+        $sortedValues = $values;
+
+        if ($order === 'ascending') {
+            sort($sortedValues, SORT_NATURAL | SORT_FLAG_CASE);
+        } else {
+            rsort($sortedValues, SORT_NATURAL | SORT_FLAG_CASE);
+        }
+
+//        var_dump($sortedValues);
+//        var_dump($values);
+
+        if ($sortedValues != $values) {
             throw $this->createExpectationException(
                 sprintf('The rows are not sorted %s by column %s', $order, $columnName)
             );

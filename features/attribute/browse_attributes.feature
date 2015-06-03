@@ -11,7 +11,7 @@ Feature: Browse attributes
     Then the grid should contain 22 elements
     And I should see the columns Code, Label, Type, Scopable, Localizable and Group
     And I should see attributes sku, name, manufacturer, weather_conditions, description, price, rating, side_view, top_view, size, color, lace_color, length, number_in_stock, heel_color, sole_color, sole_fabric, lace_fabric and cap_color
-    And the rows should be sorted ascending by code
+    And the rows should be sorted ascending by Code
     And I should be able to sort the rows by code, label, scopable, localizable and group
     Then I should be able to use the following filters:
       | filter      | value  | result                                                                                                                                                                                                        |
