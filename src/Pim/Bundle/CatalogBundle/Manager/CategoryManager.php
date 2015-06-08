@@ -37,30 +37,12 @@ class CategoryManager
      * Return object manager
      *
      * @return ObjectManager
+     *
+     * // TODO: DEGAGE
      */
     public function getObjectManager()
     {
         return $this->om;
-    }
-
-    /**
-     * Get a new category instance
-     *
-     * @return CategoryInterface
-     */
-    public function getCategoryInstance()
-    {
-        return new $this->categoryClass();
-    }
-
-    /**
-     * Return category class name (mainly used in Doctrine context)
-     *
-     * @return string category class name
-     */
-    public function getCategoryClass()
-    {
-        return $this->categoryClass;
     }
 
     /**
@@ -69,20 +51,23 @@ class CategoryManager
      * @return CategoryRepository
      *
      * TODO: Inject CategoryRepository
+     * TODO: DEGAGE
      */
     public function getEntityRepository()
     {
-        return $this->om->getRepository($this->getCategoryClass());
+        return $this->om->getRepository(new $this->categoryClass());
     }
 
     /**
      * Get a new tree instance
      *
      * @return CategoryInterface
+     *
+     * // TODO: DEGAGE
      */
     public function getTreeInstance()
     {
-        $tree = $this->getCategoryInstance();
+        $tree = new $this->categoryClass();
         $tree->setParent(null);
 
         return $tree;
@@ -90,6 +75,8 @@ class CategoryManager
 
     /**
      * {@inheritdoc}
+     *
+     * // TODO: DEGAGE, to put in repo
      */
     public function getTrees()
     {
@@ -105,6 +92,8 @@ class CategoryManager
      * @param int $selectNodeId
      *
      * @return ArrayCollection
+     *
+     * // TODO: DEGAGE, to put in repo
      */
     public function getChildren($parentId, $selectNodeId = false)
     {
@@ -141,6 +130,8 @@ class CategoryManager
      * @param array $categoriesIds
      *
      * @return Collection of categories
+     *
+     *  // TODO: DEGAGE
      */
     public function getCategoriesByIds($categoriesIds)
     {
@@ -156,6 +147,8 @@ class CategoryManager
      * @param Collection        $categories categories
      *
      * @return array Multi-dimensional array representing the tree
+     *
+     * // TODO: DEGAGE, try it in SQL
      */
     public function getFilledTree(CategoryInterface $root, Collection $categories)
     {
@@ -183,6 +176,8 @@ class CategoryManager
      * @param string $code
      *
      * @return CategoryInterface
+     *
+     * // TODO: DEGAGE to put in repo
      */
     public function getTreeByCode($code)
     {
@@ -197,6 +192,8 @@ class CategoryManager
      * @param string $code
      *
      * @return CategoryInterface
+     *
+     * // TODO: DEGAGE to put in repo
      */
     public function getCategoryByCode($code)
     {
@@ -213,6 +210,8 @@ class CategoryManager
      * @param int $categoryId
      * @param int $parentId
      * @param int $prevSiblingId
+     *
+     * TODO: DEGAGE, TOU POUTE in category mover, NO ID
      */
     public function move($categoryId, $parentId, $prevSiblingId)
     {
@@ -243,6 +242,8 @@ class CategoryManager
      * @param CategoryInterface $childNode
      *
      * @return bool
+     *
+     * // TODO: To put in repo, SQL format?
      */
     public function isAncestor(CategoryInterface $parentNode, CategoryInterface $childNode)
     {

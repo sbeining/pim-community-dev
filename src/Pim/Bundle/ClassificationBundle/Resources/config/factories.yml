@@ -1,0 +1,8 @@
+parameters:
+    pim_classification.factory.category.class: Pim\Component\Classification\CategoryFactory
+
+services:
+    pim_classification.factory.category:
+        class: %pim_classification.factory.category.class%
+        arguments:
+            - %pim_classification.model.category.class%

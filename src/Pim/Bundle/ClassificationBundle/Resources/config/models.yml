@@ -1,0 +1,2 @@
+parameters:
+    pim_classification.model.category.class: Pim\Component\Classification\Model\Category

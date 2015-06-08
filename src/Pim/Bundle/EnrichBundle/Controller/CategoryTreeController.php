@@ -12,6 +12,7 @@ use Pim\Bundle\CatalogBundle\Model\CategoryInterface;
 use Pim\Bundle\EnrichBundle\AbstractController\AbstractDoctrineController;
 use Pim\Bundle\EnrichBundle\Event\CategoryEvents;
 use Pim\Bundle\UserBundle\Context\UserContext;
+use Pim\Component\Classification\CategoryFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -50,6 +51,9 @@ class CategoryTreeController extends AbstractDoctrineController
     /** @var RemoverInterface */
     protected $categoryRemover;
 
+    /** @var CategoryFactory */
+    protected $categoryFactory;
+
     /**
      * Constructor
      *
@@ -67,6 +71,7 @@ class CategoryTreeController extends AbstractDoctrineController
      * @param SecurityFacade           $securityFacade
      * @param SaverInterface           $categorySaver
      * @param RemoverInterface         $categoryRemover
+     * @param CategoryFactory          $categoryFactory
      */
     public function __construct(
         Request $request,
@@ -82,7 +87,8 @@ class CategoryTreeController extends AbstractDoctrineController
         UserContext $userContext,
         SecurityFacade $securityFacade,
         SaverInterface $categorySaver,
-        RemoverInterface $categoryRemover
+        RemoverInterface $categoryRemover,
+        CategoryFactory $categoryFactory
     ) {
         parent::__construct(
             $request,
@@ -101,6 +107,7 @@ class CategoryTreeController extends AbstractDoctrineController
         $this->securityFacade  = $securityFacade;
         $this->categorySaver   = $categorySaver;
         $this->categoryRemover = $categoryRemover;
+        $this->categoryFactory = $categoryFactory;
     }
 
     /**
@@ -239,7 +246,7 @@ class CategoryTreeController extends AbstractDoctrineController
     {
         if ($parent) {
             $parent = $this->findCategory($parent);
-            $category = $this->categoryManager->getCategoryInstance();
+            $category = $this->categoryFactory->create();
             $category->setParent($parent);
         } else {
             $category = $this->categoryManager->getTreeInstance();
