@@ -389,8 +389,8 @@ class FeatureContext extends MinkContext implements KernelAwareInterface
     {
         for ($i = 0; $i < $wait; $i++) {
             try {
-                if ($callable($this)) {
-                    return true;
+                if ($result = $callable($this)) {
+                    return $result;
                 }
             } catch (\Exception $e) {
                 // do nothing

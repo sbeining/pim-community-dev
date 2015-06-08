@@ -55,15 +55,22 @@ class Grid extends Index
      */
     public function getGrid()
     {
-        $grids = $this->getElement('Container')->findAll('css', $this->elements['Grid']['css']);
+        try {
+            $grid = $this->spin(function () {
+                $grids = $this->getElement('Container')->findAll('css', $this->elements['Grid']['css']);
+                foreach ($grids as $grid) {
+                    if ($grid->isVisible()) {
+                        return $grid;
+                    }
+                }
 
-        foreach ($grids as $grid) {
-            if ($grid->isVisible()) {
-                return $grid;
-            }
+                return false;
+            });
+
+            return $grid;
+        } catch (\Exception $e) {
+            throw new \InvalidArgumentException('No visible grids found');
         }
-
-        throw new \InvalidArgumentException('No visible grids found');
     }
 
     /**
@@ -511,15 +518,22 @@ class Grid extends Index
      */
     public function clickOnResetButton()
     {
-        $resetBtn = $this
-            ->getElement('Grid toolbar')
-            ->find('css', sprintf('a:contains("%s")', 'Reset'));
+        try {
+            $this->spin(function () {
+                $resetBtn =  $this
+                    ->getElement('Grid toolbar')
+                    ->find('css', sprintf('a:contains("%s")', 'Reset'));
+                if ($resetBtn) {
+                    $resetBtn->click();
 
-        if (!$resetBtn) {
+                    return true;
+                }
+
+                return false;
+            });
+        } catch (\Exception $e) {
             throw new \InvalidArgumentException('Reset button not found');
         }
-
-        $resetBtn->click();
     }
 
     /**
@@ -529,15 +543,18 @@ class Grid extends Index
      */
     public function clickOnRefreshButton()
     {
-        $refreshBtn = $this
-            ->getElement('Grid toolbar')
-            ->find('css', sprintf('a:contains("%s")', 'Refresh'));
+        try {
+            $this->spin(function () {
+                $refreshBtn = $this
+                    ->getElement('Grid toolbar')
+                    ->find('css', sprintf('a:contains("%s")', 'Refresh'));
+                $refreshBtn->click();
 
-        if (!$refreshBtn) {
+                return true;
+            });
+        } catch (\Exception $e) {
             throw new \InvalidArgumentException('Refresh button not found');
         }
-
-        $refreshBtn->click();
     }
 
     /**
@@ -651,15 +668,17 @@ class Grid extends Index
      */
     protected function clickFiltersList()
     {
-        $filterList = $this
-            ->getElement('Filters')
-            ->find('css', 'a#add-filter-button');
-
-        if (!$filterList) {
+        try {
+            $this->spin(function () {
+                $filterList = $filterList = $this
+                    ->getElement('Filters')
+                    ->find('css', 'a#add-filter-button');
+                $filterList->click();
+                return true;
+            });
+        } catch (\Exception $e) {
             throw new \InvalidArgumentException('Impossible to find filter list');
         }
-
-        $filterList->click();
     }
 
     /**
@@ -673,16 +692,20 @@ class Grid extends Index
      */
     public function selectRow($value)
     {
-        $row = $this->getRow($value);
-        $checkbox = $row->find('css', 'input[type="checkbox"]');
+        try {
+            /** @var NodeElement $checkbox */
+            $checkbox = $this->spin(function () use ($value) {
+                $row = $this->getRow($value);
+                $checkbox = $row->find('css', 'input[type="checkbox"]');
+                $checkbox->check();
 
-        if (!$checkbox) {
+                return $checkbox;
+            });
+        } catch (\Exception $e) {
             throw new \InvalidArgumentException(
                 sprintf('Couldn\'t find a checkbox for row "%s"', $value)
             );
         }
-
-        $checkbox->check();
 
         return $checkbox;
     }

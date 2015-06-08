@@ -605,7 +605,6 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
      */
     public function iCheckTheRows($rows)
     {
-        $this->wait();
         $rows = $this->getMainContext()->listToArray($rows);
 
         foreach ($rows as $row) {
@@ -618,7 +617,6 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
 
             $checkbox->check();
         }
-        $this->wait();
     }
 
     /**
@@ -652,7 +650,6 @@ class DataGridContext extends RawMinkContext implements PageObjectAwareInterface
     public function iResetTheGrid()
     {
         $this->datagrid->clickOnResetButton();
-        $this->wait();
     }
 
     /**

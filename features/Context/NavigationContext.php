@@ -654,14 +654,8 @@ class NavigationContext extends RawMinkContext implements PageObjectAwareInterfa
         $this->currentPage = $page;
 
         $page = $this->getCurrentPage()->open($options);
-
-        $this->getMainContext()->spin(function ($this) {
-            $this->loginIfRequired();
-            $this->wait();
-
-            return true;
-        });
-
+        $this->loginIfRequired();
+        $this->wait(60000);
 
         return $page;
     }
