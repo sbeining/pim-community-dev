@@ -1,5 +1,5 @@
 Pim\Bundle\CatalogBundle\Model\Association:
-    type: entity
+    type: mappedSuperclass
     table: pim_catalog_association
     repositoryClass: Pim\Bundle\CatalogBundle\Doctrine\ORM\AssociationRepository
     fields:

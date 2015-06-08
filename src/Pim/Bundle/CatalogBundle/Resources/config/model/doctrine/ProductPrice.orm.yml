@@ -1,5 +1,5 @@
 Pim\Bundle\CatalogBundle\Model\ProductPrice:
-    type: entity
+    type: mappedSuperclass
     table: pim_catalog_product_value_price
     uniqueConstraints:
         value_currency_idx:

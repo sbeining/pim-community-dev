@@ -1,5 +1,5 @@
 Pim\Bundle\CatalogBundle\Model\Metric:
-    type: entity
+    type: mappedSuperclass
     table: pim_catalog_metric
     fields:
         id:
